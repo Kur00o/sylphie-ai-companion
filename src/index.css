@@ -8,32 +8,32 @@
 
 @layer base {
   :root {
-    /* Dark Emerald Theme */
-    --background: 160 40% 8%;          /* Dark Emerald Base */
-    --foreground: 160 20% 92%;         /* Light Emerald Text */
+    /* Dark Emerald Theme - Harmonized */
+    --background: 160 45% 6%;          /* Deep Emerald Base */
+    --foreground: 160 15% 88%;         /* Light Emerald Text */
 
     /* SYLPHIE Emerald Palette */
-    --primary: 160 45% 55%;            /* Bright Emerald #4ade80 */
-    --primary-foreground: 160 40% 8%;  /* Dark Emerald */
-    --primary-dark: 160 50% 25%;       /* Deep Emerald */
-    --primary-light: 160 35% 75%;      /* Light Emerald */
+    --primary: 160 50% 50%;            /* Bright Emerald */
+    --primary-foreground: 160 45% 6%;  /* Deep Emerald */
+    --primary-dark: 160 55% 22%;       /* Deep Emerald Header */
+    --primary-light: 160 40% 70%;      /* Light Emerald */
 
     /* UI Components */
-    --card: 160 35% 12%;               /* Glossy Dark Emerald Cards */
-    --card-foreground: 160 20% 92%;
+    --card: 160 40% 10%;               /* Glossy Dark Emerald Cards */
+    --card-foreground: 160 15% 88%;
     
-    --secondary: 160 30% 20%;          /* Medium Emerald */
-    --secondary-foreground: 160 20% 90%;
+    --secondary: 160 35% 16%;          /* Medium Emerald */
+    --secondary-foreground: 160 15% 85%;
 
-    --muted: 160 25% 15%;
-    --muted-foreground: 160 15% 65%;
+    --muted: 160 30% 12%;
+    --muted-foreground: 160 20% 60%;
 
-    --accent: 160 40% 25%;
-    --accent-foreground: 160 30% 85%;
+    --accent: 160 40% 20%;
+    --accent-foreground: 160 25% 80%;
 
-    --border: 160 30% 20%;
-    --input: 160 35% 15%;              /* Glossy Input Fields */
-    --ring: 160 45% 55%;
+    --border: 160 35% 18%;
+    --input: 160 40% 12%;              /* Glossy Input Fields */
+    --ring: 160 50% 50%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
@@ -41,16 +41,16 @@
     --radius: 1rem;
 
     /* Dark Emerald Glossy Gradients */
-    --gradient-emerald: linear-gradient(135deg, hsl(160 40% 8%), hsl(160 35% 12%), hsl(160 30% 10%));
-    --gradient-glossy: linear-gradient(145deg, hsl(160 40% 8%) 0%, hsl(160 35% 12%) 25%, hsl(160 30% 15%) 50%, hsl(160 35% 12%) 75%, hsl(160 40% 10%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(160 35% 12%) 0%, hsl(160 30% 15%) 50%, hsl(160 35% 10%) 100%);
-    --gradient-button: linear-gradient(135deg, hsl(160 45% 55%), hsl(160 50% 45%));
+    --gradient-emerald: linear-gradient(135deg, hsl(160 45% 6%), hsl(160 40% 10%), hsl(160 35% 8%));
+    --gradient-glossy: linear-gradient(145deg, hsl(160 45% 6%) 0%, hsl(160 40% 10%) 25%, hsl(160 35% 12%) 50%, hsl(160 40% 10%) 75%, hsl(160 45% 8%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(160 40% 10%) 0%, hsl(160 35% 14%) 50%, hsl(160 40% 8%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(160 50% 50%), hsl(160 55% 42%));
     
     /* Enhanced Shadows for Glossy Effect */
-    --shadow-soft: 0 4px 20px -4px hsl(160 50% 25% / 0.3);
-    --shadow-elegant: 0 8px 30px -6px hsl(160 50% 25% / 0.4);
-    --shadow-bubble: 0 2px 12px -2px hsl(160 40% 20% / 0.2);
-    --shadow-glossy: 0 8px 32px -8px hsl(160 50% 25% / 0.5), inset 0 1px 0 hsl(160 40% 20% / 0.3);
+    --shadow-soft: 0 4px 20px -4px hsl(160 55% 22% / 0.4);
+    --shadow-elegant: 0 8px 30px -6px hsl(160 55% 22% / 0.5);
+    --shadow-bubble: 0 2px 12px -2px hsl(160 40% 16% / 0.3);
+    --shadow-glossy: 0 8px 32px -8px hsl(160 55% 22% / 0.6), inset 0 1px 0 hsl(160 40% 16% / 0.4);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,14 +100,14 @@
     background: var(--gradient-button);
     @apply text-primary-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[80%] ml-auto;
     box-shadow: var(--shadow-glossy);
-    border: 1px solid hsl(160 40% 20% / 0.3);
+    border: 1px solid hsl(160 50% 30% / 0.4);
   }
   
   .chat-bubble-assistant {
     background: var(--gradient-card);
     @apply text-secondary-foreground rounded-2xl rounded-bl-md px-4 py-3 max-w-[80%] mr-auto;
     box-shadow: var(--shadow-glossy);
-    border: 1px solid hsl(160 30% 25% / 0.4);
+    border: 1px solid hsl(160 35% 22% / 0.5);
   }
 
   /* SYLPHIE Glossy Buttons */

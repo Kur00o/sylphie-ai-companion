@@ -122,33 +122,15 @@ const Chat = () => {
           console.log('Unknown fetch error:', fetchError.message);
         }
         
-        console.log('Using mock response as fallback');
-        // Fallback to mock response
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const mockResponse = {
-          response: `Hello! I'm SYLPHIE, your AI assistant. You said: "${messageText}". 
-
-⚠️ Note: I'm currently in demo mode because your N8N webhook has CORS restrictions. To enable real AI responses, please add CORS headers to your N8N workflow:
-
-1. Add a "Set" node before your webhook response
-2. Set these headers:
-   - Access-Control-Allow-Origin: *
-   - Access-Control-Allow-Methods: POST, GET, OPTIONS
-   - Access-Control-Allow-Headers: Content-Type
-
-Once CORS is configured, I'll connect directly to your AI agent!`,
-          status: 'success'
-        };
-        
-        const aiMessage: Message = {
+        // If direct connection fails, show error message
+        const errorMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: mockResponse.response,
+          text: 'Connection failed. Please check your N8N webhook configuration and try again.',
           isUser: false,
           timestamp: new Date(),
         };
         
-        setMessages(prev => [...prev, aiMessage]);
+        setMessages(prev => [...prev, errorMessage]);
         return;
       }
       
@@ -257,7 +239,18 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
         }
       } else {
         console.error('Response not ok:', response.status, response.statusText);
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        console.error('Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        // Handle specific HTTP errors
+        if (response.status === 500) {
+          throw new Error(`Server Error (500): Your N8N workflow has an internal error. Check your N8N workflow logs.`);
+        } else if (response.status === 404) {
+          throw new Error(`Not Found (404): N8N webhook URL not found. Check your webhook configuration.`);
+        } else if (response.status === 400) {
+          throw new Error(`Bad Request (400): Invalid request format. Check your N8N workflow input handling.`);
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -266,6 +259,12 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
       if (error instanceof Error) {
         if (error.message.includes('Failed to fetch')) {
           errorText = 'Connection failed. Please check your internet connection and N8N webhook URL.';
+        } else if (error.message.includes('Server Error (500)')) {
+          errorText = 'Server Error: Your N8N workflow has an internal error. Please check your N8N workflow logs and try again.';
+        } else if (error.message.includes('Not Found (404)')) {
+          errorText = 'Webhook not found. Please check your N8N webhook configuration.';
+        } else if (error.message.includes('Bad Request (400)')) {
+          errorText = 'Invalid request format. Please check your N8N workflow input handling.';
         } else if (error.message.includes('HTTP')) {
           errorText = `Server error: ${error.message}`;
         } else {

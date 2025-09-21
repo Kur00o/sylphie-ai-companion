@@ -112,8 +112,25 @@ const Chat = () => {
       } catch (fetchError) {
         console.error('Fetch error:', fetchError);
         
-        // Don't show error messages to user, just log them
-        console.log('N8N connection failed:', fetchError.message);
+        // Show specific error messages to help debug
+        let errorMessage = 'Connection failed. Please check your N8N webhook configuration.';
+        
+        if (fetchError.name === 'AbortError') {
+          errorMessage = 'Request timed out. Your N8N webhook is not responding within 10 seconds.';
+        } else if (fetchError.message.includes('Failed to fetch')) {
+          errorMessage = 'Network error: Cannot reach your N8N webhook. Check if the URL is correct.';
+        } else if (fetchError.message.includes('CORS')) {
+          errorMessage = 'CORS error: Your N8N webhook needs CORS headers.';
+        }
+        
+        const errorMsg: Message = {
+          id: (Date.now() + 1).toString(),
+          text: errorMessage,
+          isUser: false,
+          timestamp: new Date(),
+        };
+        
+        setMessages(prev => [...prev, errorMsg]);
         return;
       }
       
@@ -133,7 +150,7 @@ const Chat = () => {
           // Check if response is empty
           if (!rawResponse || rawResponse.trim() === '') {
             console.log('Empty response received from N8N');
-            responseText = 'I received your message but my response system seems to be empty. Please check your N8N workflow configuration.';
+            responseText = '🔄 I received your message but got an empty response from my backend. This usually means:\n\n1. Your N8N workflow is not configured to send a response\n2. The "Respond to Webhook" node is missing or not connected\n3. The workflow is running but not returning any data\n\nPlease check your N8N workflow and ensure it has a "Respond to Webhook" node that sends back a response.';
           } else if (contentType && contentType.includes('application/json')) {
             // Try to parse as JSON
             try {
@@ -354,7 +371,52 @@ const Chat = () => {
               </h2>
               <p className="text-muted-foreground max-w-md">
                 I'm your intelligent AI assistant. Ask me anything about work, life, or just have a conversation!
-            </p>
+              </p>
+              <div className="mt-4">
+                <Button 
+                  onClick={async () => {
+                    try {
+                      console.log('Testing N8N connection...');
+                      const response = await fetch('https://shubh123456.app.n8n.cloud/webhook/62c21d28-be46-45f3-a0f3-9ee500889a92', {
+                        method: 'POST',
+                        headers: { 
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                          sessionId: sessionId,
+                          message: 'Hello from test',
+                          text: 'Hello from test',
+                          input: 'Hello from test'
+                        }),
+                      });
+                      
+                      console.log('Test response status:', response.status);
+                      console.log('Test response headers:', Object.fromEntries(response.headers.entries()));
+                      
+                      const text = await response.text();
+                      console.log('Test response body:', text);
+                      console.log('Test response length:', text.length);
+                      
+                      if (response.ok) {
+                        if (text && text.trim()) {
+                          alert(`✅ Connection successful!\nStatus: ${response.status}\nResponse: ${text.substring(0, 100)}...`);
+                        } else {
+                          alert(`⚠️ Connection successful but empty response!\nStatus: ${response.status}\nYour N8N workflow needs a "Respond to Webhook" node.`);
+                        }
+                      } else {
+                        alert(`❌ Connection failed!\nStatus: ${response.status}\nResponse: ${text}`);
+                      }
+                    } catch (error) {
+                      console.error('Test Error:', error);
+                      alert(`❌ Test failed: ${error.message}`);
+                    }
+                  }}
+                  variant="outline" 
+                  size="sm"
+                >
+                  🔧 Test N8N Connection
+                </Button>
+              </div>
           </div>
         ) : (
             <div className="flex-1 p-4 space-y-4 overflow-y-auto">

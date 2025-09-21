@@ -1,56 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* SYLPHIE Design System - Elegant Teal Theme */
+/* SYLPHIE Modern Design System - Premium Dark Theme */
 
 @layer base {
   :root {
-    /* Dark Emerald Theme - Harmonized */
-    --background: 160 45% 6%;          /* Deep Emerald Base */
-    --foreground: 160 15% 88%;         /* Light Emerald Text */
+    /* Modern Dark Emerald Theme - Enhanced */
+    --background: 160 45% 4%;          /* Deeper Base */
+    --foreground: 160 15% 95%;         /* High Contrast Text */
 
-    /* SYLPHIE Emerald Palette */
-    --primary: 160 50% 50%;            /* Bright Emerald */
-    --primary-foreground: 160 45% 6%;  /* Deep Emerald */
-    --primary-dark: 160 55% 22%;       /* Deep Emerald Header */
-    --primary-light: 160 40% 70%;      /* Light Emerald */
+    /* SYLPHIE Modern Palette */
+    --primary: 160 60% 55%;            /* Vibrant Emerald */
+    --primary-foreground: 160 45% 4%;  /* Deep Contrast */
+    --primary-dark: 160 55% 18%;       /* Rich Dark Header */
+    --primary-light: 160 45% 75%;      /* Soft Light Accent */
 
-    /* UI Components */
-    --card: 160 40% 10%;               /* Glossy Dark Emerald Cards */
-    --card-foreground: 160 15% 88%;
+    /* Enhanced UI Components */
+    --card: 160 40% 8%;                /* Sleek Dark Cards */
+    --card-foreground: 160 15% 95%;
     
-    --secondary: 160 35% 16%;          /* Medium Emerald */
-    --secondary-foreground: 160 15% 85%;
+    --secondary: 160 30% 12%;          /* Refined Secondary */
+    --secondary-foreground: 160 15% 90%;
 
-    --muted: 160 30% 12%;
-    --muted-foreground: 160 20% 60%;
+    --muted: 160 25% 10%;
+    --muted-foreground: 160 20% 65%;
 
-    --accent: 160 40% 20%;
-    --accent-foreground: 160 25% 80%;
+    --accent: 160 45% 18%;
+    --accent-foreground: 160 25% 85%;
 
-    --border: 160 35% 18%;
-    --input: 160 40% 12%;              /* Glossy Input Fields */
-    --ring: 160 50% 50%;
+    --border: 160 30% 15%;
+    --input: 160 35% 10%;              /* Refined Input Fields */
+    --ring: 160 60% 55%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
-    /* Dark Emerald Glossy Gradients */
-    --gradient-emerald: linear-gradient(135deg, hsl(160 45% 6%), hsl(160 40% 10%), hsl(160 35% 8%));
-    --gradient-glossy: linear-gradient(145deg, hsl(160 45% 6%) 0%, hsl(160 40% 10%) 25%, hsl(160 35% 12%) 50%, hsl(160 40% 10%) 75%, hsl(160 45% 8%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(160 40% 10%) 0%, hsl(160 35% 14%) 50%, hsl(160 40% 8%) 100%);
-    --gradient-button: linear-gradient(135deg, hsl(160 50% 50%), hsl(160 55% 42%));
+    /* Modern Premium Gradients */
+    --gradient-emerald: linear-gradient(135deg, hsl(160 45% 4%), hsl(160 40% 8%), hsl(160 35% 6%));
+    --gradient-glossy: linear-gradient(145deg, hsl(160 45% 4%) 0%, hsl(160 40% 8%) 25%, hsl(160 35% 10%) 50%, hsl(160 40% 8%) 75%, hsl(160 45% 6%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(160 40% 8%) 0%, hsl(160 35% 12%) 50%, hsl(160 40% 6%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(160 60% 55%), hsl(160 65% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(160 60% 55%) 0%, hsl(160 55% 65%) 50%, hsl(160 50% 60%) 100%);
     
-    /* Enhanced Shadows for Glossy Effect */
-    --shadow-soft: 0 4px 20px -4px hsl(160 55% 22% / 0.4);
-    --shadow-elegant: 0 8px 30px -6px hsl(160 55% 22% / 0.5);
-    --shadow-bubble: 0 2px 12px -2px hsl(160 40% 16% / 0.3);
-    --shadow-glossy: 0 8px 32px -8px hsl(160 55% 22% / 0.6), inset 0 1px 0 hsl(160 40% 16% / 0.4);
+    /* Premium Shadows */
+    --shadow-soft: 0 4px 24px -4px hsl(160 55% 18% / 0.6);
+    --shadow-elegant: 0 12px 40px -8px hsl(160 55% 18% / 0.7);
+    --shadow-bubble: 0 4px 16px -4px hsl(160 40% 16% / 0.4);
+    --shadow-glossy: 0 12px 40px -8px hsl(160 55% 18% / 0.8), inset 0 1px 0 hsl(160 40% 16% / 0.5);
+    --shadow-hero: 0 20px 60px -12px hsl(160 60% 55% / 0.4);
 
     --sidebar-background: 0 0% 98%;
 
@@ -95,52 +97,137 @@
 }
 
 @layer components {
-  /* SYLPHIE Chat Bubbles with Glossy Effect */
+  /* Modern Chat Bubbles - Premium Design */
   .chat-bubble-user {
     background: var(--gradient-button);
-    @apply text-primary-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[80%] ml-auto;
-    box-shadow: var(--shadow-glossy);
-    border: 1px solid hsl(160 50% 30% / 0.4);
+    @apply text-primary-foreground rounded-3xl rounded-br-lg px-5 py-4 max-w-[85%] ml-auto relative;
+    box-shadow: var(--shadow-elegant);
+    border: 1px solid hsl(160 60% 40% / 0.3);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .chat-bubble-user::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, hsl(160 60% 55% / 0.1), transparent);
+    pointer-events: none;
   }
   
   .chat-bubble-assistant {
     background: var(--gradient-card);
-    @apply text-secondary-foreground rounded-2xl rounded-bl-md px-4 py-3 max-w-[80%] mr-auto;
-    box-shadow: var(--shadow-glossy);
-    border: 1px solid hsl(160 35% 22% / 0.5);
+    @apply text-secondary-foreground rounded-3xl rounded-bl-lg px-5 py-4 max-w-[85%] mr-auto relative;
+    box-shadow: var(--shadow-bubble);
+    border: 1px solid hsl(160 35% 18% / 0.4);
+    backdrop-filter: blur(10px);
   }
 
-  /* SYLPHIE Glossy Buttons */
+  /* Modern Premium Buttons */
   .btn-hero {
-    background: var(--gradient-button);
-    @apply text-primary-foreground rounded-2xl px-8 py-4 font-semibold transition-all duration-300 hover:scale-105 active:scale-95;
-    box-shadow: var(--shadow-elegant);
-    border: 1px solid hsl(160 50% 35% / 0.3);
+    background: var(--gradient-hero);
+    @apply text-primary-foreground rounded-2xl px-10 py-5 font-semibold text-lg transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden;
+    box-shadow: var(--shadow-hero);
+    border: 1px solid hsl(160 60% 45% / 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(160 60% 65% / 0.3), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .btn-hero:hover::before {
+    left: 100%;
   }
 
   .btn-send {
     background: var(--gradient-button);
-    @apply text-primary-foreground rounded-full p-3 transition-all duration-200 hover:scale-105 active:scale-95;
+    @apply text-primary-foreground rounded-full p-4 transition-all duration-200 hover:scale-110 active:scale-95;
     box-shadow: var(--shadow-soft);
-    border: 1px solid hsl(160 50% 35% / 0.3);
+    border: 1px solid hsl(160 60% 40% / 0.3);
+    backdrop-filter: blur(10px);
   }
 
-  /* SYLPHIE Animations */
+  /* Modern Animations */
   .fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .slide-up {
-    animation: slideUp 0.3s ease-out forwards;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .glow {
+    animation: glow 2s ease-in-out infinite alternate;
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+      opacity: 0; 
+      transform: translateY(30px) scale(0.95); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0) scale(1); 
+    }
   }
 
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+      opacity: 0; 
+      transform: translateY(20px) scale(0.98); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0) scale(1); 
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes glow {
+    from { 
+      box-shadow: var(--shadow-elegant), 0 0 20px hsl(160 60% 55% / 0.3); 
+    }
+    to { 
+      box-shadow: var(--shadow-elegant), 0 0 30px hsl(160 60% 55% / 0.6); 
+    }
+  }
+
+  /* Modern Glass Effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Typography Enhancements */
+  .text-gradient {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
 }

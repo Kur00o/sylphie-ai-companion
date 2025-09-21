@@ -14,7 +14,7 @@ const About = () => {
           <ArrowLeft className="w-5 h-5" />
           <span>Back to Home</span>
         </Link>
-        <div className="text-xl font-semibold text-primary">
+        <div className="text-2xl font-bold text-gradient">
           SYLPHIE
         </div>
       </nav>
@@ -27,7 +27,7 @@ const About = () => {
             alt="SYLPHIE Logo" 
             className="w-32 h-32 object-contain mx-auto mb-6"
           />
-          <h1 className="text-4xl font-bold text-primary mb-4">About SYLPHIE</h1>
+          <h1 className="text-4xl font-bold text-gradient mb-4">About SYLPHIE</h1>
           <p className="text-xl text-accent-foreground">
             Your Intelligent AI Assistant
           </p>
@@ -35,7 +35,7 @@ const About = () => {
 
         <div className="prose prose-lg mx-auto text-foreground fade-in">
           <div className="rounded-3xl p-8 shadow-glossy mb-8" style={{ background: 'var(--gradient-card)' }}>
-            <h2 className="text-2xl font-semibold text-primary mb-4">What is SYLPHIE?</h2>
+            <h2 className="text-2xl font-semibold text-gradient mb-4">What is SYLPHIE?</h2>
             <p className="text-card-foreground leading-relaxed">
               SYLPHIE is your personal AI assistant designed to seamlessly integrate into both your professional 
               and personal life. With an elegant, intuitive interface and powerful conversational abilities, 
@@ -44,7 +44,7 @@ const About = () => {
           </div>
 
           <div className="rounded-3xl p-8 shadow-glossy mb-8" style={{ background: 'var(--gradient-card)' }}>
-            <h2 className="text-2xl font-semibold text-primary mb-4">Our Mission</h2>
+            <h2 className="text-2xl font-semibold text-gradient mb-4">Our Mission</h2>
             <p className="text-card-foreground leading-relaxed">
               We believe that AI should be approachable, helpful, and designed with elegance in mind. 
               SYLPHIE represents our commitment to creating technology that enhances human potential 
@@ -53,7 +53,7 @@ const About = () => {
           </div>
 
           <div className="rounded-3xl p-8 shadow-glossy" style={{ background: 'var(--gradient-card)' }}>
-            <h2 className="text-2xl font-semibold text-primary mb-4">Why Choose SYLPHIE?</h2>
+            <h2 className="text-2xl font-semibold text-gradient mb-4">Why Choose SYLPHIE?</h2>
             <ul className="space-y-3 text-card-foreground">
               <li className="flex items-start space-x-3">
                 <span className="text-primary">•</span>

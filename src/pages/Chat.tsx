@@ -102,7 +102,7 @@ const Chat = () => {
         
         // Create AbortController for timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout for N8N processing
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 1 minute timeout for N8N processing
         
         response = await fetch('https://shubh123456.app.n8n.cloud/webhook/62c21d28-be46-45f3-a0f3-9ee500889a92', {
           method: 'POST',
@@ -140,7 +140,7 @@ const Chat = () => {
         let errorMessage = 'Connection failed. Please check your N8N webhook configuration.';
         
         if (fetchError.name === 'AbortError') {
-          errorMessage = 'Request timed out. Your N8N webhook is not responding within 10 seconds.';
+          errorMessage = 'Request timed out. Your N8N webhook is not responding within 1 minute.';
         } else if (fetchError.message.includes('Failed to fetch')) {
           errorMessage = 'Network error: Cannot reach your N8N webhook. Check if the URL is correct.';
         } else if (fetchError.message.includes('CORS')) {
@@ -545,7 +545,7 @@ const Chat = () => {
                     <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Processing with N8N... {loadingStartTime > 0 ? `(${Math.floor((Date.now() - loadingStartTime) / 1000)}s)` : ''} This may take up to 30 seconds
+                        Processing with N8N... {loadingStartTime > 0 ? `(${Math.floor((Date.now() - loadingStartTime) / 1000)}s)` : ''} Please wait for response
                       </div>
                   </div>
                 </div>

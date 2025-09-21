@@ -88,7 +88,7 @@ const Chat = () => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
         
-        response = await fetch('https://shubh123456.app.n8n.cloud/webhook-test/62c21d28-be46-45f3-a0f3-9ee500889a92', {
+        response = await fetch('https://shubh123456.app.n8n.cloud/webhook/62c21d28-be46-45f3-a0f3-9ee500889a92', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -384,7 +384,7 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                       const controller = new AbortController();
                       const timeoutId = setTimeout(() => controller.abort(), 5000);
                       
-                      const response = await fetch('https://shubh123456.app.n8n.cloud/webhook-test/62c21d28-be46-45f3-a0f3-9ee500889a92', {
+                      const response = await fetch('https://shubh123456.app.n8n.cloud/webhook/62c21d28-be46-45f3-a0f3-9ee500889a92', {
                         method: 'POST',
                         headers: { 
                           'Content-Type': 'application/json',
@@ -450,7 +450,7 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                 <Button 
                   onClick={async () => {
                     try {
-                      const response = await fetch('https://shubh123456.app.n8n.cloud/webhook-test/62c21d28-be46-45f3-a0f3-9ee500889a92', {
+                      const response = await fetch('https://shubh123456.app.n8n.cloud/webhook/62c21d28-be46-45f3-a0f3-9ee500889a92', {
                         method: 'POST',
                         headers: { 
                           'Content-Type': 'application/json',

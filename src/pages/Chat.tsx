@@ -17,8 +17,27 @@ const Chat = () => {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // Generate session ID on component mount
+  useEffect(() => {
+    const generateSessionId = () => {
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 15);
+      return `sylphie_${timestamp}_${random}`;
+    };
+    
+    const newSessionId = generateSessionId();
+    setSessionId(newSessionId);
+    console.log('Generated Session ID:', newSessionId);
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      console.log('Chat component cleanup');
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,8 +49,8 @@ const Chat = () => {
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
-    
-    const messageText = inputValue;
+
+    const messageText = inputValue.trim();
     setInputValue("");
     
     // Add user message
@@ -41,30 +60,69 @@ const Chat = () => {
       isUser: true,
       timestamp: new Date(),
     };
-    
+
+    try {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
-    
+    } catch (error) {
+      console.error('Error adding user message:', error);
+      return;
+    }
+
     try {
       // Try direct connection first, then fallback to mock
       let response;
       let isDirectConnection = false;
       
       try {
+        console.log('Sending request to N8N with payload:', {
+          message: messageText,
+          text: messageText,
+          input: messageText,
+          sessionId: sessionId,
+          timestamp: new Date().toISOString(),
+          userId: 'user_' + Date.now(),
+        });
+        
+        // Create AbortController for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
         response = await fetch('https://shubh123456.app.n8n.cloud/webhook-test/62c21d28-be46-45f3-a0f3-9ee500889a92', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            sessionId: sessionId,
             message: messageText,
             text: messageText,
             input: messageText,
+            timestamp: new Date().toISOString(),
+            userId: 'user_' + Date.now(),
           }),
+          signal: controller.signal,
         });
+        
+        clearTimeout(timeoutId);
+        
+        console.log('N8N Response Status:', response.status);
+        console.log('N8N Response Headers:', Object.fromEntries(response.headers.entries()));
         isDirectConnection = true;
-      } catch (corsError) {
-        console.log('Direct connection failed (CORS), using mock response');
+      } catch (fetchError) {
+        console.error('Fetch error:', fetchError);
+        
+        if (fetchError.name === 'AbortError') {
+          console.log('Request timed out after 10 seconds');
+        } else if (fetchError.message.includes('CORS')) {
+          console.log('CORS error detected');
+        } else if (fetchError.message.includes('Failed to fetch')) {
+          console.log('Network error - N8N webhook might be down');
+        } else {
+          console.log('Unknown fetch error:', fetchError.message);
+        }
+        
+        console.log('Using mock response as fallback');
         // Fallback to mock response
         await new Promise(resolve => setTimeout(resolve, 1000));
         
@@ -107,7 +165,11 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
           console.log('Response Status:', response.status);
           console.log('Response Headers:', Object.fromEntries(response.headers.entries()));
           
-          if (contentType && contentType.includes('application/json')) {
+          // Check if response is empty
+          if (!rawResponse || rawResponse.trim() === '') {
+            console.log('Empty response received from N8N');
+            responseText = 'I received your message but my response system seems to be empty. Please check your N8N workflow configuration.';
+          } else if (contentType && contentType.includes('application/json')) {
             // Try to parse as JSON
             try {
               const data = await response.json();
@@ -130,8 +192,26 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                 responseText = data.result;
               } else if (data.data) {
                 responseText = data.data;
+              } else if (data.myField) {
+                responseText = data.myField;
+              } else if (data.value) {
+                responseText = data.value;
               } else {
-                responseText = JSON.stringify(data, null, 2);
+                // If it's a simple object with one field, use that field's value
+                const keys = Object.keys(data);
+                if (keys.length === 1) {
+                  responseText = data[keys[0]];
+                } else {
+                  responseText = JSON.stringify(data, null, 2);
+                }
+              }
+              
+              // Format the response text for better readability
+              if (responseText && typeof responseText === 'string') {
+                // Add some basic formatting
+                responseText = responseText
+                  .replace(/\n/g, '\n') // Preserve line breaks
+                  .trim(); // Remove extra whitespace
               }
             } catch (jsonError) {
               console.log('JSON parse failed, using raw text:', jsonError);
@@ -162,7 +242,19 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
           timestamp: new Date(),
         };
         
-        setMessages(prev => [...prev, aiMessage]);
+        try {
+          setMessages(prev => [...prev, aiMessage]);
+        } catch (error) {
+          console.error('Error adding AI message:', error);
+          // Fallback: show error message
+          const errorMessage: Message = {
+            id: (Date.now() + 2).toString(),
+            text: 'Sorry, I encountered an error processing your message. Please try again.',
+            isUser: false,
+            timestamp: new Date(),
+          };
+          setMessages(prev => [...prev, errorMessage]);
+        }
       } else {
         console.error('Response not ok:', response.status, response.statusText);
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -237,6 +329,11 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
               <div>
                 <h1 className="text-lg font-semibold text-foreground">SYLPHIE</h1>
                 <p className="text-xs text-muted-foreground">AI Assistant</p>
+                {sessionId && (
+                  <p className="text-xs text-muted-foreground font-mono">
+                    Session: {sessionId.substring(0, 20)}...
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -260,7 +357,7 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
       {/* Chat Messages */}
       <main className="flex-1 overflow-y-auto relative z-10">
         <div className="h-full flex flex-col">
-          {messages.length === 0 ? (
+        {messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
               <div className="w-24 h-24 bg-black rounded-full flex items-center justify-center mb-6 relative overflow-hidden">
                 <div className="absolute inset-0 bg-black rounded-full blur-lg opacity-50 scale-110"></div>
@@ -283,12 +380,26 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                 <Button 
                   onClick={async () => {
                     try {
+                      console.log('Testing N8N connection...');
+                      const controller = new AbortController();
+                      const timeoutId = setTimeout(() => controller.abort(), 5000);
+                      
                       const response = await fetch('https://shubh123456.app.n8n.cloud/webhook-test/62c21d28-be46-45f3-a0f3-9ee500889a92', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ test: 'connection' }),
+                        headers: { 
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                          sessionId: sessionId,
+                          test: 'connection',
+                          timestamp: new Date().toISOString(),
+                        }),
+                        signal: controller.signal,
                       });
+                      
+                      clearTimeout(timeoutId);
                       console.log('Test response status:', response.status);
+                      console.log('Test response headers:', Object.fromEntries(response.headers.entries()));
                       
                       // Handle response parsing safely
                       const contentType = response.headers.get('content-type');
@@ -305,24 +416,78 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                       }
                       
                       console.log('Test response data:', responseData);
-                      alert('✅ Connection successful! N8N webhook is working properly.');
+                      alert(`✅ Connection successful!\nStatus: ${response.status}\nResponse: ${JSON.stringify(responseData).substring(0, 100)}...`);
                     } catch (error) {
-                      console.error('CORS Error (expected):', error);
-                      alert(`❌ CORS Error: ${error.message}\n\nTo fix this, add CORS headers to your N8N workflow:\n\n1. Add a "Set" node before your webhook response\n2. Set these headers:\n   - Access-Control-Allow-Origin: *\n   - Access-Control-Allow-Methods: POST, GET, OPTIONS\n   - Access-Control-Allow-Headers: Content-Type`);
+                      console.error('Test Error:', error);
+                      if (error.name === 'AbortError') {
+                        alert('❌ Request timed out - N8N webhook is not responding');
+                      } else if (error.message.includes('Failed to fetch')) {
+                        alert('❌ Network error - N8N webhook is not reachable');
+                      } else {
+                        alert(`❌ Error: ${error.message}\n\nCheck your N8N webhook configuration.`);
+                      }
                     }
                   }}
                   variant="outline" 
                   size="sm"
                 >
-                  Test N8N Connection (Shows CORS Error)
+                  Test N8N Connection
+                </Button>
+                
+                <Button 
+                  onClick={() => {
+                    console.log('Current messages:', messages);
+                    console.log('Current session ID:', sessionId);
+                    console.log('Current loading state:', isLoading);
+                    alert(`Debug Info:\nMessages: ${messages.length}\nSession: ${sessionId}\nLoading: ${isLoading}`);
+                  }}
+                  variant="outline" 
+                  size="sm"
+                >
+                  Debug State
+                </Button>
+                
+                <Button 
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('https://shubh123456.app.n8n.cloud/webhook-test/62c21d28-be46-45f3-a0f3-9ee500889a92', {
+                        method: 'POST',
+                        headers: { 
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                          sessionId: sessionId,
+                          test: 'simple',
+                          message: 'Hello from test'
+                        }),
+                      });
+                      
+                      const text = await response.text();
+                      console.log('Simple test response:', text);
+                      console.log('Response length:', text.length);
+                      console.log('Response status:', response.status);
+                      
+                      if (text.length === 0) {
+                        alert('❌ N8N is returning empty response!\n\nYou need to add a "Respond to Webhook" node in your N8N workflow.');
+                      } else {
+                        alert(`✅ N8N is working!\nResponse: ${text.substring(0, 100)}...`);
+                      }
+                    } catch (error) {
+                      alert(`❌ Test failed: ${error.message}`);
+                    }
+                  }}
+                  variant="outline" 
+                  size="sm"
+                >
+                  Test Empty Response
                 </Button>
               </div>
-            </div>
-          ) : (
+          </div>
+        ) : (
             <div className="flex-1 p-4 space-y-4 overflow-y-auto">
               {messages.map((message, index) => (
-                <div
-                  key={message.id}
+              <div
+                key={message.id}
                   className={`flex gap-3 ${message.isUser ? "justify-end" : "justify-start"} slide-up`}
                 >
                   {!message.isUser && (
@@ -337,15 +502,28 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                     </Avatar>
                   )}
                   
-                  <div className={`flex flex-col max-w-[75%] ${message.isUser ? "items-end" : "items-start"}`}>
+                  <div 
+                    className={`flex flex-col ${message.isUser ? "items-end" : "items-start"}`}
+                    style={{
+                      maxWidth: message.text.length > 100 ? '85%' : '75%',
+                      minWidth: '200px'
+                    }}
+                  >
                     <div
                       className={
                         message.isUser 
                           ? "chat-bubble-user" 
                           : "chat-bubble-assistant"
                       }
+                      style={{
+                        wordBreak: 'break-word',
+                        overflowWrap: 'break-word',
+                        maxWidth: '100%'
+                      }}
                     >
-                      <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap break-words">{message.text}</p>
+                      <div className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
+                        {message.text}
+                      </div>
                     </div>
                     <span className="text-xs text-muted-foreground mt-1 px-2">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -359,10 +537,10 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                       </AvatarFallback>
                     </Avatar>
                   )}
-                </div>
-              ))}
+              </div>
+            ))}
               
-              {isLoading && (
+            {isLoading && (
                 <div className="flex gap-3 justify-start slide-up">
                   <Avatar className="w-8 h-8 flex-shrink-0">
                     <AvatarFallback className="bg-black overflow-hidden">
@@ -373,18 +551,18 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
                       />
                     </AvatarFallback>
                   </Avatar>
-                  <div className="chat-bubble-assistant">
+                <div className="chat-bubble-assistant">
                     <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                      <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                    </div>
+                    <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                    <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
                   </div>
                 </div>
-              )}
-              <div ref={messagesEndRef} />
+              </div>
+            )}
+            <div ref={messagesEndRef} />
             </div>
-          )}
+        )}
         </div>
       </main>
 
@@ -393,27 +571,27 @@ Once CORS is configured, I'll connect directly to your AI agent!`,
         <div className="max-w-4xl mx-auto">
           <div className="flex gap-3 items-end">
             <div className="flex-1 relative">
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Type your message..."
+          <Input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder="Type your message..."
                 className="w-full rounded-2xl border-border/50 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 focus:border-primary/50 bg-card/50 backdrop-blur-sm pr-12"
-                disabled={isLoading}
-              />
+            disabled={isLoading}
+          />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
                 Press Enter to send
               </div>
             </div>
-            <Button
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim() || isLoading}
-              className="btn-send"
-              size="icon"
-            >
-              <Send className="w-5 h-5" />
-              <span className="sr-only">Send message</span>
-            </Button>
+          <Button
+            onClick={handleSendMessage}
+            disabled={!inputValue.trim() || isLoading}
+            className="btn-send"
+            size="icon"
+          >
+            <Send className="w-5 h-5" />
+            <span className="sr-only">Send message</span>
+          </Button>
           </div>
         </div>
       </footer>

@@ -18,6 +18,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string>('');
+  const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -47,6 +48,20 @@ const Chat = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Update loading time display
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isLoading && loadingStartTime > 0) {
+      interval = setInterval(() => {
+        // Force re-render to update the loading time
+        setLoadingStartTime(prev => prev);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading, loadingStartTime]);
+
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
 
@@ -64,6 +79,7 @@ const Chat = () => {
     try {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
+    setLoadingStartTime(Date.now());
     } catch (error) {
       console.error('Error adding user message:', error);
       return;
@@ -86,7 +102,7 @@ const Chat = () => {
         
         // Create AbortController for timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout for N8N processing
         
         response = await fetch('https://shubh123456.app.n8n.cloud/webhook/62c21d28-be46-45f3-a0f3-9ee500889a92', {
           method: 'POST',
@@ -108,6 +124,14 @@ const Chat = () => {
         
         console.log('N8N Response Status:', response.status);
         console.log('N8N Response Headers:', Object.fromEntries(response.headers.entries()));
+        
+        // Get response body for debugging
+        const responseClone = response.clone();
+        const responseText = await responseClone.text();
+        console.log('N8N Response Body:', responseText);
+        console.log('N8N Response Length:', responseText.length);
+        console.log('N8N Response Type:', typeof responseText);
+        
         isDirectConnection = true;
       } catch (fetchError) {
         console.error('Fetch error:', fetchError);
@@ -151,6 +175,16 @@ const Chat = () => {
           if (!rawResponse || rawResponse.trim() === '') {
             console.log('Empty response received from N8N');
             responseText = '🔄 I received your message but got an empty response from my backend. This usually means:\n\n1. Your N8N workflow is not configured to send a response\n2. The "Respond to Webhook" node is missing or not connected\n3. The workflow is running but not returning any data\n\nPlease check your N8N workflow and ensure it has a "Respond to Webhook" node that sends back a response.';
+            
+            // Also show a fallback message since the workflow is executing
+            const fallbackMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              text: 'I can see your N8N workflow is executing successfully, but it\'s not sending back a response. Please add a "Respond to Webhook" node to your workflow.',
+              isUser: false,
+              timestamp: new Date(),
+            };
+            setMessages(prev => [...prev, fallbackMessage]);
+            return;
           } else if (contentType && contentType.includes('application/json')) {
             // Try to parse as JSON
             try {
@@ -372,7 +406,7 @@ const Chat = () => {
               <p className="text-muted-foreground max-w-md">
                 I'm your intelligent AI assistant. Ask me anything about work, life, or just have a conversation!
               </p>
-              <div className="mt-4">
+              <div className="mt-4 space-y-2">
                 <Button 
                   onClick={async () => {
                     try {
@@ -415,6 +449,23 @@ const Chat = () => {
                   size="sm"
                 >
                   🔧 Test N8N Connection
+                </Button>
+                
+                <Button 
+                  onClick={() => {
+                    // Add a test message to see if the UI works
+                    const testMessage: Message = {
+                      id: Date.now().toString(),
+                      text: 'This is a test message to check if the UI is working properly.',
+                      isUser: false,
+                      timestamp: new Date(),
+                    };
+                    setMessages(prev => [...prev, testMessage]);
+                  }}
+                  variant="outline" 
+                  size="sm"
+                >
+                  🧪 Test UI (Add Message)
                 </Button>
               </div>
           </div>
@@ -487,10 +538,15 @@ const Chat = () => {
                     </AvatarFallback>
                   </Avatar>
                 <div className="chat-bubble-assistant">
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex space-x-2">
                     <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
                     <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Processing with N8N... {loadingStartTime > 0 ? `(${Math.floor((Date.now() - loadingStartTime) / 1000)}s)` : ''} This may take up to 30 seconds
+                      </div>
                   </div>
                 </div>
               </div>

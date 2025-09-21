@@ -112,25 +112,8 @@ const Chat = () => {
       } catch (fetchError) {
         console.error('Fetch error:', fetchError);
         
-        if (fetchError.name === 'AbortError') {
-          console.log('Request timed out after 10 seconds');
-        } else if (fetchError.message.includes('CORS')) {
-          console.log('CORS error detected');
-        } else if (fetchError.message.includes('Failed to fetch')) {
-          console.log('Network error - N8N webhook might be down');
-        } else {
-          console.log('Unknown fetch error:', fetchError.message);
-        }
-        
-        // If direct connection fails, show error message
-        const errorMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: 'Connection failed. Please check your N8N webhook configuration and try again.',
-          isUser: false,
-          timestamp: new Date(),
-        };
-        
-        setMessages(prev => [...prev, errorMessage]);
+        // Don't show error messages to user, just log them
+        console.log('N8N connection failed:', fetchError.message);
         return;
       }
       
@@ -371,7 +354,7 @@ const Chat = () => {
               </h2>
               <p className="text-muted-foreground max-w-md">
                 I'm your intelligent AI assistant. Ask me anything about work, life, or just have a conversation!
-              </p>
+            </p>
           </div>
         ) : (
             <div className="flex-1 p-4 space-y-4 overflow-y-auto">
@@ -398,13 +381,13 @@ const Chat = () => {
                       maxWidth: message.text.length > 100 ? '85%' : '75%',
                       minWidth: '200px'
                     }}
-                  >
-                    <div
-                      className={
-                        message.isUser 
-                          ? "chat-bubble-user" 
-                          : "chat-bubble-assistant"
-                      }
+              >
+                <div
+                  className={
+                    message.isUser 
+                      ? "chat-bubble-user" 
+                      : "chat-bubble-assistant"
+                  }
                       style={{
                         wordBreak: 'break-word',
                         overflowWrap: 'break-word',
@@ -418,7 +401,7 @@ const Chat = () => {
                     <span className="text-xs text-muted-foreground mt-1 px-2">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
-                  </div>
+                </div>
 
                   {message.isUser && (
                     <Avatar className="w-8 h-8 flex-shrink-0">

@@ -68,10 +68,13 @@ export default {
         'soft': 'var(--shadow-soft)',
         'elegant': 'var(--shadow-elegant)',
         'bubble': 'var(--shadow-bubble)',
+        'glossy': 'var(--shadow-glossy)',
       },
       backgroundImage: {
-        'gradient-teal': 'var(--gradient-teal)',
-        'gradient-light': 'var(--gradient-light)',
+        'gradient-emerald': 'var(--gradient-emerald)',
+        'gradient-glossy': 'var(--gradient-glossy)',
+        'gradient-card': 'var(--gradient-card)',
+        'gradient-button': 'var(--gradient-button)',
       },
       borderRadius: {
         lg: "var(--radius)",

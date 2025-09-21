@@ -3,7 +3,7 @@ import sylphieLogo from "@/assets/sylphie-logo.png";
 
 const Landing = () => {
   return (
-    <div className="min-h-screen bg-gradient-light">
+    <div className="min-h-screen bg-gradient-glossy">
       {/* Top Navigation */}
       <nav className="flex justify-between items-center p-6 md:p-8">
         <div className="text-xl font-semibold text-primary">
@@ -34,7 +34,7 @@ const Landing = () => {
         </h1>
 
         {/* Tagline */}
-        <p className="text-xl md:text-2xl text-muted-foreground text-center mb-12 fade-in max-w-md">
+        <p className="text-xl md:text-2xl text-accent-foreground text-center mb-12 fade-in max-w-md">
           Your AI Assistant for Work & Life
         </p>
 

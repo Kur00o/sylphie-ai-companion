@@ -4,7 +4,7 @@ import sylphieLogo from "@/assets/sylphie-logo.png";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gradient-light">
+    <div className="min-h-screen bg-gradient-glossy">
       {/* Navigation */}
       <nav className="flex items-center justify-between p-6 md:p-8">
         <Link 
@@ -28,13 +28,13 @@ const About = () => {
             className="w-32 h-32 object-contain mx-auto mb-6"
           />
           <h1 className="text-4xl font-bold text-primary mb-4">About SYLPHIE</h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-accent-foreground">
             Your Intelligent AI Assistant
           </p>
         </div>
 
         <div className="prose prose-lg mx-auto text-foreground fade-in">
-          <div className="bg-card rounded-3xl p-8 shadow-soft mb-8">
+          <div className="rounded-3xl p-8 shadow-glossy mb-8" style={{ background: 'var(--gradient-card)' }}>
             <h2 className="text-2xl font-semibold text-primary mb-4">What is SYLPHIE?</h2>
             <p className="text-card-foreground leading-relaxed">
               SYLPHIE is your personal AI assistant designed to seamlessly integrate into both your professional 
@@ -43,7 +43,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="bg-card rounded-3xl p-8 shadow-soft mb-8">
+          <div className="rounded-3xl p-8 shadow-glossy mb-8" style={{ background: 'var(--gradient-card)' }}>
             <h2 className="text-2xl font-semibold text-primary mb-4">Our Mission</h2>
             <p className="text-card-foreground leading-relaxed">
               We believe that AI should be approachable, helpful, and designed with elegance in mind. 
@@ -52,7 +52,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="bg-card rounded-3xl p-8 shadow-soft">
+          <div className="rounded-3xl p-8 shadow-glossy" style={{ background: 'var(--gradient-card)' }}>
             <h2 className="text-2xl font-semibold text-primary mb-4">Why Choose SYLPHIE?</h2>
             <ul className="space-y-3 text-card-foreground">
               <li className="flex items-start space-x-3">

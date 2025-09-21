@@ -8,46 +8,49 @@
 
 @layer base {
   :root {
-    /* Core SYLPHIE Brand Colors */
-    --background: 0 0% 100%;
-    --foreground: 171 34% 20%;
+    /* Dark Emerald Theme */
+    --background: 160 40% 8%;          /* Dark Emerald Base */
+    --foreground: 160 20% 92%;         /* Light Emerald Text */
 
-    /* SYLPHIE Teal Palette */
-    --primary: 171 34% 36%;           /* Deep Teal Green #3C7A6E */
-    --primary-foreground: 0 0% 100%;  /* White */
-    --primary-dark: 171 34% 28%;      /* Darker Teal #2E5D52 */
-    --primary-light: 171 30% 92%;     /* Light Teal #E6F2EF */
+    /* SYLPHIE Emerald Palette */
+    --primary: 160 45% 55%;            /* Bright Emerald #4ade80 */
+    --primary-foreground: 160 40% 8%;  /* Dark Emerald */
+    --primary-dark: 160 50% 25%;       /* Deep Emerald */
+    --primary-light: 160 35% 75%;      /* Light Emerald */
 
     /* UI Components */
-    --card: 0 0% 100%;
-    --card-foreground: 171 34% 20%;
+    --card: 160 35% 12%;               /* Glossy Dark Emerald Cards */
+    --card-foreground: 160 20% 92%;
     
-    --secondary: 171 30% 92%;
-    --secondary-foreground: 171 34% 20%;
+    --secondary: 160 30% 20%;          /* Medium Emerald */
+    --secondary-foreground: 160 20% 90%;
 
-    --muted: 171 15% 96%;
-    --muted-foreground: 171 10% 45%;
+    --muted: 160 25% 15%;
+    --muted-foreground: 160 15% 65%;
 
-    --accent: 171 30% 92%;
-    --accent-foreground: 171 34% 36%;
+    --accent: 160 40% 25%;
+    --accent-foreground: 160 30% 85%;
 
-    --border: 171 15% 90%;
-    --input: 0 0% 100%;
-    --ring: 171 34% 36%;
+    --border: 160 30% 20%;
+    --input: 160 35% 15%;              /* Glossy Input Fields */
+    --ring: 160 45% 55%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
     --radius: 1rem;
 
-    /* SYLPHIE Gradients */
-    --gradient-teal: linear-gradient(135deg, hsl(171 34% 36%), hsl(171 40% 45%));
-    --gradient-light: linear-gradient(180deg, hsl(0 0% 100%), hsl(171 30% 98%));
+    /* Dark Emerald Glossy Gradients */
+    --gradient-emerald: linear-gradient(135deg, hsl(160 40% 8%), hsl(160 35% 12%), hsl(160 30% 10%));
+    --gradient-glossy: linear-gradient(145deg, hsl(160 40% 8%) 0%, hsl(160 35% 12%) 25%, hsl(160 30% 15%) 50%, hsl(160 35% 12%) 75%, hsl(160 40% 10%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(160 35% 12%) 0%, hsl(160 30% 15%) 50%, hsl(160 35% 10%) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(160 45% 55%), hsl(160 50% 45%));
     
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(171 34% 36% / 0.15);
-    --shadow-elegant: 0 8px 30px -6px hsl(171 34% 36% / 0.2);
-    --shadow-bubble: 0 2px 12px -2px hsl(171 34% 36% / 0.1);
+    /* Enhanced Shadows for Glossy Effect */
+    --shadow-soft: 0 4px 20px -4px hsl(160 50% 25% / 0.3);
+    --shadow-elegant: 0 8px 30px -6px hsl(160 50% 25% / 0.4);
+    --shadow-bubble: 0 2px 12px -2px hsl(160 40% 20% / 0.2);
+    --shadow-glossy: 0 8px 32px -8px hsl(160 50% 25% / 0.5), inset 0 1px 0 hsl(160 40% 20% / 0.3);
 
     --sidebar-background: 0 0% 98%;
 
@@ -67,13 +70,13 @@
   }
 
   .dark {
-    /* Keep consistent SYLPHIE branding in dark mode */
-    --background: 171 34% 8%;
-    --foreground: 0 0% 100%;
-    --primary: 171 34% 45%;
-    --primary-foreground: 0 0% 100%;
-    --card: 171 34% 12%;
-    --card-foreground: 0 0% 100%;
+    /* Enhanced Dark Emerald Theme for explicit dark mode */
+    --background: 160 45% 6%;
+    --foreground: 160 20% 95%;
+    --primary: 160 50% 60%;
+    --primary-foreground: 160 45% 6%;
+    --card: 160 40% 10%;
+    --card-foreground: 160 20% 95%;
   }
 }
 
@@ -92,22 +95,34 @@
 }
 
 @layer components {
-  /* SYLPHIE Chat Bubbles */
+  /* SYLPHIE Chat Bubbles with Glossy Effect */
   .chat-bubble-user {
-    @apply bg-primary text-primary-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[80%] ml-auto shadow-bubble;
+    background: var(--gradient-button);
+    @apply text-primary-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[80%] ml-auto;
+    box-shadow: var(--shadow-glossy);
+    border: 1px solid hsl(160 40% 20% / 0.3);
   }
   
   .chat-bubble-assistant {
-    @apply bg-secondary text-secondary-foreground rounded-2xl rounded-bl-md px-4 py-3 max-w-[80%] mr-auto shadow-bubble;
+    background: var(--gradient-card);
+    @apply text-secondary-foreground rounded-2xl rounded-bl-md px-4 py-3 max-w-[80%] mr-auto;
+    box-shadow: var(--shadow-glossy);
+    border: 1px solid hsl(160 30% 25% / 0.4);
   }
 
-  /* SYLPHIE Buttons */
+  /* SYLPHIE Glossy Buttons */
   .btn-hero {
-    @apply bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-2xl px-8 py-4 font-semibold shadow-elegant hover:shadow-soft transition-all duration-300 hover:scale-105 active:scale-95;
+    background: var(--gradient-button);
+    @apply text-primary-foreground rounded-2xl px-8 py-4 font-semibold transition-all duration-300 hover:scale-105 active:scale-95;
+    box-shadow: var(--shadow-elegant);
+    border: 1px solid hsl(160 50% 35% / 0.3);
   }
 
   .btn-send {
-    @apply bg-primary text-primary-foreground rounded-full p-3 shadow-soft hover:bg-primary/90 transition-all duration-200 hover:scale-105 active:scale-95;
+    background: var(--gradient-button);
+    @apply text-primary-foreground rounded-full p-3 transition-all duration-200 hover:scale-105 active:scale-95;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid hsl(160 50% 35% / 0.3);
   }
 
   /* SYLPHIE Animations */
